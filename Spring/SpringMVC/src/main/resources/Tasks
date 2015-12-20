@@ -1,0 +1,26 @@
+Suggestions
+-----------
+Postman extension for Chrome Browser for Rest client testing
+
+Implemented
+-----------
+1.Spring MVC with annotation 
+2.Spring JDBC authentication & Authorization.
+3.Rest Web service(Spring/CXF) -json binding & returning arraylist
+4.SOAP Web service(CXF) -Security part is pending
+5.Applying security to Rest web service (http Basic Authentication)
+6.Hibernate Integration -
+
+Pending tasks
+-------------
+0.Spring SSO Integration
+4.Transaction
+5.ORM
+6.AOP for transactions
+7.JMS
+8.OXM
+9.Spring Batch
+10.Web Flow
+11.spring-session
+12.spring-ws SOAP
+

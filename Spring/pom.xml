@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.sample.spring</groupId>
+  <artifactId>Spring</artifactId>
+  <version>1.0</version>
+  <packaging>pom</packaging>
+  <properties>
+
+		<!-- Generic properties -->
+		<cxf.version>3.1.4</cxf.version>
+		
+		<java.version>1.6</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		
+	
+		<jsp.version>2.2</jsp.version>
+		<jstl.version>1.2</jstl.version>
+		<servlet.version>3.0.1</servlet.version>
+		
+		<javax.validation.version>1.1.0.Final</javax.validation.version>
+		
+		<javax.jws.version>1.0-MR1</javax.jws.version>
+		<javax.annotation.version>1.0</javax.annotation.version>
+		<hibernate-validator.version>5.0.2.Final</hibernate-validator.version>
+
+		<!-- Spring -->
+		<spring-framework.version>4.2.3.RELEASE</spring-framework.version>
+		<spring-security.version>4.0.3.RELEASE</spring-security.version>
+<!-- 
+		Hibernate / JPA
+		<hibernate.version>4.2.1.Final</hibernate.version> -->
+
+		
+		<logback.version>1.0.13</logback.version>
+		<slf4j.version>1.7.5</slf4j.version>
+		
+		<mockito.version>1.10.19</mockito.version>
+		
+		<jackson.version>2.5.3</jackson.version>
+		
+		<junit.version>4.11</junit.version>
+		<testng.version>6.9.4</testng.version>
+        <dbunit.version>2.2</dbunit.version>
+		
+		<hsqldb.version>2.3.2</hsqldb.version>
+		<mysql.version>5.1.37</mysql.version>
+		<hibernate.version>4.3.6.Final</hibernate.version>
+		<!-- 
+			Has issues
+		<hibernate.version>5.0.5.Final</hibernate.version> -->
+		<joda-time.version>2.3</joda-time.version>
+		<jta.version>1.1</jta.version>
+		<jackson.version>1.9.13</jackson.version>
+	</properties>
+  
+  <modules>
+  	<module>Security</module>
+  	<module>Spring-Dao</module>  	
+  	<module>Spring-CXF</module>
+  	<module>SpringMVC</module>
+  </modules>
+  
+   <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

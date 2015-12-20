@@ -1,0 +1,24 @@
+
+HTTP BASIC authentication headers (an IEFT RFC-based standard)  -Implemented
+Form-based authentication (for simple user interface needs)		-Implemented
+
+HTTP Digest authentication headers (an IEFT RFC-based standard)
+Single sign on
+HTTP X.509 client certificate exchange (an IEFT RFC-based standard)
+LDAP (a very common approach to cross-platform authentication needs, especially in large environments)
+Automatic "remember-me" authentication	(so you can tick a box to avoid re-authentication for a predetermined period of time)
+Run-as authentication (which is useful if one call should proceed with a different security identity)
+Java Authentication and Authorization Service (JAAS)
+
+
+Securing web application
+	https://docs.oracle.com/javaee/6/tutorial/doc/gkbaa.html
+
+Public key encryption
+  https://en.wikipedia.org/wiki/Public-key_cryptography
+  
+A more detailed description of key generation can be found here:
+http://java.sun.com/javase/6/docs/technotes/tools/solaris/keytool.html
+
+How to create a production certificate can be found here:
+	http://support.globalsign.net/en/objectsign/java.cfm

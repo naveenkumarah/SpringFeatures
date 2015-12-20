@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- START SNIPPET: beans -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<bean id="client" class="com.sample.ws.service.IStudentService"
+		factory-bean="clientFactory" factory-method="create" />
+	<bean id="clientFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
+		<property name="serviceClass" value="com.sample.ws.service.IStudentService" />
+		<property name="address"
+			value="http://localhost:8080/SpringMVC-1.0/services/StudentService" />
+		<property name="inInterceptors">
+			<list>
+				<bean class="org.apache.cxf.binding.soap.saaj.SAAJInInterceptor" />
+				<ref bean="SignIn" />
+			</list>
+		</property>
+		<property name="outInterceptors">
+			<list>
+				<bean class="org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor" />
+				<ref bean="SignOut" />
+			</list>
+		</property>
+	</bean>
+	<bean id="wss4jOutConfiguration" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+		<property name="properties">
+			<map>
+				<entry key="action" value="UsernameToken Timestamp" />
+				<entry key="user" value="alice" />
+				<entry key="passwordType" value="PasswordDigest" />
+				<entry key="passwordCallbackRef" value-ref="passwordCallback"/>		
+			</map>
+		</property>
+	</bean>
+	<!-- <bean id="passwordCallback" class="com.sample.ws.service.PasswordCallbackHandlerTest" />	 -->
+	
+	<bean id="passwordCallback" class="com.sample.ws.service.UTPasswordCallback" />
+	
+	<bean id="SignIn" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">							 
+		<constructor-arg>
+			<map>
+				<entry key="action" value="UsernameToken Timestamp Signature Encrypt" />
+				<entry key="passwordType" value="PasswordText" />
+				<entry key="passwordCallbackRef" value-ref="passwordCallback"/>
+				
+				<entry key="decryptionPropFile" value="etc/Client_Sign.properties"/>
+				<entry key="encryptionKeyIdentifier" value="IssuerSerial"/>
+				
+				<entry key="signaturePropFile" value="etc/Client_Encrypt.properties"/>
+				<entry key="signatureKeyIdentifier" value="DirectReference"/>
+				
+				<entry key="encryptionKeyTransportAlgorithm" value="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+				<entry key="signatureAlgorithm" value="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+			</map>
+		</constructor-arg>
+	</bean>
+        
+	<bean id="SignOut" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+		<constructor-arg>
+			<map>
+				<entry key="action" value="UsernameToken Timestamp Signature Encrypt" />
+				
+				<entry key="passwordType" value="PasswordText" />
+				<entry key="passwordCallbackRef" value-ref="passwordCallback"/>
+				
+				<entry key="user" value="abcd" />
+				<entry key="signatureUser" value="clientx509v1" />
+				
+				<entry key="encryptionUser" value="serverx509v1" />
+				<entry key="encryptionPropFile" value="etc/Client_Encrypt.properties"/>
+				<entry key="encryptionKeyIdentifier" value="IssuerSerial"/>
+				<entry key="encryptionParts" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd}UsernameToken;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
+				
+				<entry key="signaturePropFile" value="etc/Client_Sign.properties"/>
+				<entry key="signatureKeyIdentifier" value="DirectReference"/>
+				<entry key="signatureParts" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
+				
+				
+				<entry key="encryptionKeyTransportAlgorithm" value="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+				<entry key="signatureAlgorithm" value="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+			</map>
+		</constructor-arg>
+	</bean>
+		
+</beans>
+<!-- END SNIPPET: beans -->

@@ -1,0 +1,1 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><ns2:getStudentResponse xmlns:ns2="http://service.ws.sample.com/"><return><course>B.E</course><id>416436</id><name>Naveen Kumar A.H</name></return></ns2:getStudentResponse></soap:Body></soap:Envelope>

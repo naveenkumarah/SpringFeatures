@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- START SNIPPET: beans -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<jaxws:endpoint id="studentService"
+		implementor="com.sample.ws.service.StudentServiceImpl" address="/StudentService">
+		<jaxws:features>
+			<bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+		<jaxws:inInterceptors>
+			<bean class="org.apache.cxf.binding.soap.saaj.SAAJInInterceptor" />
+			<ref bean="SignIn" />
+		</jaxws:inInterceptors>
+		<jaxws:outInterceptors>
+				<bean class="org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor" />
+				<ref bean="SignOut" />
+		</jaxws:outInterceptors>
+	</jaxws:endpoint>
+
+	<bean id="wss4jInConfiguration" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+		<property name="properties">
+			<map>
+				<entry key="action" value="UsernameToken Timestamp" />
+				<entry key="passwordType" value="PasswordDigest" />
+				<entry key="passwordCallbackRef" value-ref="passwordCallback"/>				
+			</map>
+		</property>
+	</bean>
+
+	<!-- <bean id="passwordCallback" class="com.sample.ws.service.PasswordCallbackHandler" /> -->
+	<bean id="passwordCallback" class="com.sample.ws.service.UTPasswordCallback" />
+	
+	
+	<bean id="SignIn" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+		<constructor-arg>
+			<map>
+				<entry key="action" value="UsernameToken Timestamp Signature Encrypt" />
+				<entry key="passwordType" value="PasswordText" />
+				<entry key="passwordCallbackRef" value-ref="passwordCallback"/>
+				
+				<entry key="decryptionPropFile" value="etc/Server_Decrypt.properties"/>
+				<entry key="encryptionKeyIdentifier" value="IssuerSerial"/>
+				
+				<entry key="signaturePropFile" value="etc/Server_SignVerf.properties"/>
+				<entry key="signatureKeyIdentifier" value="DirectReference"/>
+				<entry key="encryptionKeyTransportAlgorithm" value="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+				<entry key="signatureAlgorithm" value="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+			</map>
+		</constructor-arg>
+	</bean>
+	
+        
+	<bean id="SignOut" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+		<constructor-arg>
+			<map>
+				<entry key="action" value="UsernameToken Timestamp Signature Encrypt" />
+				
+				<entry key="passwordType" value="PasswordText" />
+				<entry key="passwordCallbackRef" value-ref="passwordCallback"/>
+				
+				<entry key="user" value="alice" />
+				<entry key="signatureUser" value="serverx509v1" />
+				
+				<entry key="encryptionUser" value="clientx509v1" />
+				<entry key="encryptionPropFile" value="etc/Server_SignVerf.properties"/>
+				<entry key="encryptionKeyIdentifier" value="IssuerSerial"/>
+				<entry key="encryptionParts" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd}UsernameToken;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
+				
+				<entry key="signaturePropFile" value="etc/Server_Decrypt.properties"/>
+				<entry key="signatureKeyIdentifier" value="DirectReference"/>
+				<entry key="signatureParts" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
+				
+				
+				<entry key="encryptionKeyTransportAlgorithm" value="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+				<entry key="signatureAlgorithm" value="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+			</map>
+		</constructor-arg>
+	</bean>
+
+
+
+
+	<!-- to support Java-to-JSON and vice-versa conversion -->
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
+
+	<!-- to support Java-to-XML and vice-versa conversion -->
+	<bean id="jaxbXmlProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider" />
+
+	<jaxrs:server id="bookservice" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="customerservice" />
+		</jaxrs:serviceBeans>
+		<!-- <jaxrs:extensionMappings> <entry key="json" value="application/json" 
+			/> use .json to get data in JSON format <entry key="xml" value="application/xml" 
+			/> use .xml to get data in XML format </jaxrs:extensionMappings> <jaxrs:providers> 
+			<ref bean="jsonProvider" /> <ref bean="jaxbXmlProvider" /> </jaxrs:providers> -->
+
+		<!-- <jaxrs:providers> <bean class="demo.jaxrs.service.SecurityExceptionMapper"/> 
+			</jaxrs:providers> -->
+	</jaxrs:server>
+
+
+	<bean id="customerservice" class="com.sample.jaxrs.service.EmployeeServiceSecuredImpl" />
+</beans>
+<!-- END SNIPPET: beans -->

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  - Application context containing business beans.
+  -
+  - Used by all artifacts.
+  -
+  -->
+
+<b:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:b="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+
+	<global-method-security secured-annotations="enabled" pre-post-annotations="enabled">
+		<!-- <protect-pointcut access="ROLE_USER" expression="execution(* com.mycompany.*Service.*(..))"/> -->
+	</global-method-security>
+	
+	 <http realm="Contacts Realm" use-expressions="false" auto-config="true">
+		<intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+		<intercept-url pattern="/index.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+		<intercept-url pattern="/hello.htm" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+		<intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+		<intercept-url pattern="/secure/list.do" access="ROLE_ADMIN"/>
+		<access-denied-handler error-page="/accessDenied.jsp"/>
+		
+		<intercept-url pattern="" />
+		<form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?login_error=1"/>
+		<http-basic/>
+		<logout logout-success-url="/login.jsp" delete-cookies="JSESSIONID"/>
+		<remember-me />
+		<headers/>
+		<csrf/>
+		<!-- <custom-filter ref="switchUserProcessingFilter" position="SWITCH_USER_FILTER"/>
+			session-authentication-strategy-ref="myAuthFilter"
+		 -->
+		<session-management >
+			<concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
+		</session-management>
+	</http>
+	<http security="none" pattern="/user/*">
+	
+	</http>
+	<b:bean id="myAuthFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+		
+	</b:bean>
+	<authentication-manager>
+		<authentication-provider>
+		 <password-encoder ref="md5PasswordEncoder"/>
+		   <jdbc-user-service data-source-ref="dataSource"/>
+		</authentication-provider>
+	</authentication-manager>
+	
+</b:beans>
