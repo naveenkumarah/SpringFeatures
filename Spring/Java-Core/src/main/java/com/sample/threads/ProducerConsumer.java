@@ -1,11 +1,16 @@
 package com.sample.threads;
+
 public class ProducerConsumer {
 	public static void main(String[] args) {
+		
+		ThreadGroup tg=new ThreadGroup("naveen");
+		System.out.println("Thread "+Thread.currentThread().getThreadGroup());
 		CubbyHole c = new CubbyHole();
-		Producer p1 = new Producer(c, 1);
-		Consumer c1 = new Consumer(c, 1);
+		Producer p1 = new Producer(tg,c, 1);
+		Consumer c1 = new Consumer(tg,c, 1);
 		p1.start();
 		c1.start();
+		//tg.list();
 	}
 }
 
@@ -42,17 +47,21 @@ class Consumer extends Thread {
 	private CubbyHole cubbyhole;
 	private int number;
 
-	public Consumer(CubbyHole c, int number) {
+	public Consumer(ThreadGroup tg,CubbyHole c, int number) {
+		super(tg,Consumer.class.getSimpleName());
 		cubbyhole = c;
 		this.number = number;
+		
 	}
 
 	public void run() {
 		int value = 0;
 		for (int i = 0; i < 10; i++) {
 			value = cubbyhole.get();
-			System.out.println("Consumer #" + this.number + " got: " + value);
+			System.out.println(getName()+" #" + this.number + " got: " + value);
+			System.out.println("Thread "+Thread.currentThread().getThreadGroup());
 		}
+		
 	}
 }
 
@@ -60,7 +69,8 @@ class Producer extends Thread {
 	private CubbyHole cubbyhole;
 	private int number;
 
-	public Producer(CubbyHole c, int number) {
+	public Producer(ThreadGroup tg,CubbyHole c, int number) {
+		super(tg,Producer.class.getSimpleName());
 		cubbyhole = c;
 		this.number = number;
 	}
@@ -68,9 +78,9 @@ class Producer extends Thread {
 	public void run() {
 		for (int i = 0; i < 10; i++) {
 			cubbyhole.put(i);
-			System.out.println("Producer #" + this.number + " put: " + i);
+			System.out.println(getName()+" #" + this.number + " put: " + i);
 			try {
-				sleep((int) (Math.random() * 100));
+				sleep((int) (Math.random() * 1000));
 			} catch (InterruptedException e) {
 			}
 		}

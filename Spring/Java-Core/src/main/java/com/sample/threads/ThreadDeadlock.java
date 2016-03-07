@@ -1,5 +1,11 @@
 package com.sample.threads;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ThreadDeadlock {
+
+	private static final Logger logger = LoggerFactory.getLogger(ThreadDeadlock.class);
 
 	public static void main(String[] args) throws InterruptedException {
 		Object obj1 = new Object();
@@ -15,7 +21,7 @@ public class ThreadDeadlock {
 		t2.start();
 		Thread.sleep(5000);
 		t3.start();
-
+		
 	}
 
 }
@@ -23,7 +29,7 @@ public class ThreadDeadlock {
 class SyncThread implements Runnable {
 	private Object obj1;
 	private Object obj2;
-
+	private static final Logger logger = LoggerFactory.getLogger(SyncThread.class);
 	public SyncThread(Object o1, Object o2) {
 		this.obj1 = o1;
 		this.obj2 = o2;
@@ -51,7 +57,7 @@ class SyncThread implements Runnable {
 		try {
 			Thread.sleep(30000);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(null,e,e.getMessage());
 		}
 	}
 }
