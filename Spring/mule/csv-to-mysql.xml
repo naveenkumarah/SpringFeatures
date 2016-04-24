@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:context="http://www.springframework.org/schema/context" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    
+      <db:mysql-config database="mule" doc:name="MySQL Configuration" host="localhost" name="MySQL_Configuration" password="naveen" port="3306" user="root"/>
+
+	<batch:job name="database-Batch" max-failed-records="-1">
+       <batch:process-records>
+            <batch:step name="queryExistingContactInDbStep">
+            <enricher doc:name="Message Enricher">
+                    <db:select config-ref="MySQL_Configuration" doc:name="Check existence in Database">
+                        <db:parameterized-query><![CDATA[SELECT first_name,last_name,email FROM contact WHERE email=#[payload.email]]]></db:parameterized-query>
+					</db:select>
+                    <enrich source="#[payload.size() > 0]" target="#[recordVars['exists']]"/>
+                    <enrich source="#[payload]" target="#[recordVars['dbRecord']]"/>
+                </enricher>
+               
+            </batch:step>
+            <batch:step name="SaveData" accept-policy="ALL">
+                <batch:commit size="100" doc:name="Batch Commit">
+                	<logger doc:name="Logger" level="INFO" message="Batch contact"/>
+                    <db:insert config-ref="MySQL_Configuration" bulkMode="true" doc:name="Create contact">
+                        <db:parameterized-query><![CDATA[INSERT INTO contact (first_name, last_name,phone, email) VALUES (#[payload.first_name],#[payload.last_name],#[payload.phone],#[payload.email])]]></db:parameterized-query>
+                    </db:insert>
+                </batch:commit>
+            <!-- 
+            	<choice doc:name="Choice">
+                    <when expression="#[recordVars['exists']==false]">
+		                <db:insert config-ref="MySQL_Configuration" doc:name="Create contact" >
+		                    <db:parameterized-query><![CDATA[INSERT INTO contact (first_name, last_name,phone, email) VALUES (#[payload.first_name],#[payload.last_name],#[payload.phone],#[payload.email])]]></db:parameterized-query>
+		                </db:insert>
+		            </when>
+		            <when expression="#[recordVars['exists']==true and recordVars['dbRecord'] != null]">
+                    	<logger doc:name="Logger" level="INFO" message="Data already existis #[payload.email] Updating contact"/>
+                    	<db:update config-ref="MySQL_Configuration" doc:name="Update Contact">
+                            <db:parameterized-query><![CDATA[UPDATE contact SET first_name=#[payload.first_name],last_name=#[payload.last_name] WHERE email = #[payload.email]]]></db:parameterized-query>
+						</db:update>
+						
+                    </when>
+                    <otherwise>
+                        <logger doc:name="Logger" level="INFO" message="Error with #[payload.email] contact"/>
+                    </otherwise>
+                </choice>
+                 -->
+            </batch:step>
+            <batch:step name="FailedData" accept-policy="ONLY_FAILURES">
+            		<logger doc:name="Logger" level="INFO" message="Error with #[payload.email] contact"/>
+            </batch:step>
+        </batch:process-records>
+         <batch:on-complete>
+            <logger doc:name="Log completion" level="INFO" message="Batch sf->db has finished"/>
+        </batch:on-complete>
+    </batch:job>
+    <flow name="csv-to-mysqlFlow1">
+    	<file:inbound-endpoint doc:name="Poll files" metadata:id="d465231a-3a94-4460-acce-174c73019323" path="src/main/resources/input" responseTimeout="10000"/>
+   		<logger doc:name="Logger" level="INFO" message="#[flowVars.timestamp]"/>
+   		<dw:transform-message metadata:id="e1a94970-919a-4529-ac32-165c1b7b7486" doc:name="CSV to Map">
+                    <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload map
+{
+	first_name: $.firstname,
+	last_name: $.lastname,
+	phone: $.phone,
+	email: $.email	
+}]]></dw:set-payload>
+                </dw:transform-message>
+        <batch:execute doc:name="database-Batch" name="database-Batch"/>
+   </flow>
+</mule>
