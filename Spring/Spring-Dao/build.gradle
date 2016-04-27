@@ -1,0 +1,19 @@
+
+description = ''
+dependencies {
+    compile group: 'org.springframework', name: 'spring-webmvc', version:'4.2.3.RELEASE'
+    compile group: 'org.springframework', name: 'spring-tx', version:'4.2.3.RELEASE'
+    compile group: 'org.springframework', name: 'spring-orm', version:'4.2.3.RELEASE'
+    compile group: 'org.hibernate', name: 'hibernate-core', version:'4.3.6.Final'
+    compile group: 'org.hibernate', name: 'hibernate-validator', version:'5.0.2.Final'
+    compile group: 'javax.validation', name: 'validation-api', version:'1.1.0.Final'
+    compile group: 'joda-time', name: 'joda-time', version:'2.3'
+    compile group: 'org.jadira.usertype', name: 'usertype.core', version:'3.0.0.CR1'
+    compile group: 'mysql', name: 'mysql-connector-java', version:'5.1.37'
+    compile group: 'org.hibernate', name: 'hibernate-entitymanager', version:'4.3.6.Final'
+    testCompile group: 'org.springframework', name: 'spring-test', version:'4.2.3.RELEASE'
+    testCompile group: 'org.testng', name: 'testng', version:'6.9.4'
+    testCompile group: 'org.mockito', name: 'mockito-all', version:'1.10.19'
+    testCompile group: 'dbunit', name: 'dbunit', version:'2.2'
+}
+test.useTestNG()

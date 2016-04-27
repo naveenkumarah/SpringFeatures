@@ -1,0 +1,14 @@
+rootProject.name = 'Spring'
+include ':Java-Core'
+include ':Security'
+include ':Spring-Dao'
+include ':Spring-CXF'
+include ':SpringMVC'
+include ':Selenium'
+
+project(':Java-Core').projectDir = "$rootDir/Java-Core" as File
+project(':Security').projectDir = "$rootDir/Security" as File
+project(':Spring-Dao').projectDir = "$rootDir/Spring-Dao" as File
+project(':Spring-CXF').projectDir = "$rootDir/Spring-CXF" as File
+project(':SpringMVC').projectDir = "$rootDir/SpringMVC" as File
+project(':Selenium').projectDir = "$rootDir/Selenium" as File
