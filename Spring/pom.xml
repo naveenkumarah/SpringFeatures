@@ -61,7 +61,6 @@
   	<module>Spring-Dao</module>  	
   	<module>Spring-CXF</module>
   	<module>SpringMVC</module>
-  	<module>Selenium</module>
   </modules>
   
    <build>

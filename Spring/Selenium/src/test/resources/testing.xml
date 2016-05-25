@@ -1,7 +1,0 @@
-<suite name="Suite1" verbose="1" >
-  <test name="test1" >
-    <classes>
-       <class name="com.sample.selenium.GoogleSearchTest" />
-    </classes>
-  </test>
-</suite>
