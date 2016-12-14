@@ -1,4 +1,4 @@
-package com.sample.security.config;
+package com.sample.jaxrs.service;
 
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 

@@ -14,12 +14,11 @@ import org.springframework.web.servlet.view.JstlView;
 
 import com.sample.dao.config.HibernateConfiguration;
 import com.sample.mvc.controller.CORSFilter;
-import com.sample.security.config.SecurityConfig;
 
 @EnableWebMvc
 @Configuration
 @ComponentScan({ "com.sample.mvc.controller","com.sample.rest.controller","com.sample.jaxrs.service"})
-@Import({ SecurityConfig.class,CORSFilter.class,HibernateConfiguration.class})
+@Import({ MultiHttpSecurityConfig.class,CORSFilter.class,HibernateConfiguration.class})
 @ImportResource({"classpath:applicationContext-common-business.xml","classpath:application-ws.xml"})
 public class AppConfig extends WebMvcConfigurerAdapter{
 	@Bean
